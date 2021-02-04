@@ -3,6 +3,8 @@ ruby '>= 2.3.1'
 
 gem 'sinatra', '>= 2.0.2'
 gem 'sinatra-flash', '0.3.0'
+# gem 'autotest', '~> 5.0'
+# gem 'irb', '~> 0.9.6'
 
 group :development, :test do
   gem 'cucumber', '2.0.0'
