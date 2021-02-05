@@ -33,10 +33,10 @@ class HangpersonGame
     end
 
     if @word.include? guess and 
-        @guesses = guess
+        @guesses += guess
         @right_letters.push(guess)
     else 
-        @wrong_guesses = guess
+        @wrong_guesses += guess
         @wrong_count = @wrong_count + 1
     end
     @letters.push(guess)
@@ -58,12 +58,17 @@ class HangpersonGame
           return :lose
       end
       
-      if word_with_guesses.match? (/\A[a-zA-Z]*\z/)
-          return :win
-      elsif word_with_guesses.match? (/\A[---]*\z/)
-          return :lose
+#       if word_with_guesses.match? (/\A[a-zA-Z]*\z/)
+#           return :win
+#       elsif word_with_guesses.match? (/\A[---]*\z/)
+#           return :lose
+#       else
+#           return :play
+#       end
+      if word_with_guesses.include?('-')
+        return :play
       else
-          return :play
+        return :win
       end
   end
 

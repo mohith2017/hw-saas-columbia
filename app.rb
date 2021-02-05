@@ -31,6 +31,8 @@ class HangpersonApp < Sinatra::Base
     # NOTE: don't change previous line - it's needed by autograder!
 
     @game = HangpersonGame.new(word)
+    session[:state] = nil
+      
     redirect '/show'
   end
   
@@ -40,7 +42,29 @@ class HangpersonApp < Sinatra::Base
   post '/guess' do
     letter = params[:guess].to_s[0]
     ### YOUR CODE HERE ###
-    @game = HangpersonGame.guess(letter)
+    
+#     @ = HangpersonGame.guess(letter)
+      
+    final = nil
+    
+    begin
+    final = @game.guess(letter)
+    rescue ArgumentError => e
+        flash[:message] = "Invalid guess."
+    end
+      
+    if not final.nil? and not final
+        flash[:message] = "You have already used that letter."
+    end
+      
+#     if @game.guess(letter).@wrong_guesses
+#         flash[:message] = "You have already used that letter."
+#     end
+
+    
+    
+   
+#     flash[:message] = "You have already used that letter."
     redirect '/show'
   end
   
@@ -51,17 +75,45 @@ class HangpersonApp < Sinatra::Base
   # wrong_guesses and word_with_guesses from @game.
   get '/show' do
     ### YOUR CODE HERE ###
-    #guesses = @wrong_guesses
+    #guesses = @wrong_guesses 
+#     if @game.check_win_or_lose == :win 
+#         session[:state] = :win
+# 		redirect "/win";
+# 	end
+	
+# 	if @game.check_win_or_lose == :lose
+#         session[:state] = :lose
+# 		redirect "/lose";
+# 	end
+      
+#     status = @game.check_win_or_lose
+#     if status == :win
+# 		redirect "/win";
+# 	end
+	
+# 	if status == :lose
+# 		redirect "/lose";
+# 	end
+	
+# 	@wrong_guesses = @game.wrong_guesses
+# 	@word_with_guesses = @game.word_with_guesses
+    
     erb :show # You may change/remove this line
   end
   
   get '/win' do
     ### YOUR CODE HERE ###
+#     if @game.check_win_or_lose != :win
+# 		redirect '/show'
+# 	end
     erb :win # You may change/remove this line
   end
   
   get '/lose' do
     ### YOUR CODE HERE ###
+#     if @game.check_win_or_lose != :lose
+# 		redirect '/show'
+# 	end
     erb :lose # You may change/remove this line
   end
   
