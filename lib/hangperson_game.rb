@@ -8,79 +8,139 @@ class HangpersonGame
   # def initialize()
   # end
     
+#   def initialize(word)
+#     @word = word
+#     @guesses = ""
+#     @wrong_guesses = ""
+#     @letters = Array.new(0)
+#     @right_letters = Array.new(0)
+#     @wrong_count = 0
+#   end
+    
+#   attr_accessor :word
+#   attr_accessor :guesses
+#   attr_accessor :wrong_guesses
+    
+#   def guess(guess)
+#     if (guess.nil?) or guess=="" or (not guess.match? (/\A[a-zA-Z]*\z/))
+#         raise ArgumentError.new
+#     end
+      
+#     guess = guess.downcase
+    
+#     if @letters.include? guess
+#         return false
+#     end
+
+#     if @word.include? guess and 
+#         @guesses += guess
+#         @right_letters.push(guess)
+#     else 
+#         @wrong_guesses += guess
+#         @wrong_count = @wrong_count + 1
+#     end
+#     @letters.push(guess)
+#     return true
+#   end
+    
+#   def word_with_guesses
+#       displayed = @word
+#       displayed.chars.each_with_index { |x, index|
+#          if not @right_letters.include? x
+#              displayed[index] = "-"
+#          end
+#       }
+#       return displayed
+#   end
+    
+#   def check_win_or_lose
+#       if @wrong_count >= 7
+#           return :lose
+#       end
+      
+# #       if word_with_guesses.match? (/\A[a-zA-Z]*\z/)
+# #           return :win
+# #       elsif word_with_guesses.match? (/\A[---]*\z/)
+# #           return :lose
+# #       else
+# #           return :play
+# #       end
+#       if word_with_guesses.include?('-')
+#         return :play
+#       else
+#         return :win
+#       end
+#   end
+
+#   # You can test it by running $ bundle exec irb -I. -r app.rb
+#   # And then in the irb: irb(main):001:0> HangpersonGame.get_random_word
+#   #  => "cooking"   <-- some random word
+#   def self.get_random_word
+#     require 'uri'
+#     require 'net/http'
+#     uri = URI('http://watchout4snakes.com/wo4snakes/Random/RandomWord')
+#     Net::HTTP.new('watchout4snakes.com').start { |http|
+#       return http.post(uri, "").body
+#     }
+#   end
+# end
+  attr_accessor :word, :guesses, :wrong_guesses
+  
   def initialize(word)
     @word = word
-    @guesses = ""
-    @wrong_guesses = ""
-    @letters = Array.new(0)
-    @right_letters = Array.new(0)
-    @wrong_count = 0
-  end
-    
-  attr_accessor :word
-  attr_accessor :guesses
-  attr_accessor :wrong_guesses
-    
-  def guess(guess)
-    if (guess.nil?) or guess=="" or (not guess.match? (/\A[a-zA-Z]*\z/))
-        raise ArgumentError.new
-    end
-      
-    guess = guess.downcase
-    
-    if @letters.include? guess
-        return false
-    end
-
-    if @word.include? guess and 
-        @guesses += guess
-        @right_letters.push(guess)
-    else 
-        @wrong_guesses += guess
-        @wrong_count = @wrong_count + 1
-    end
-    @letters.push(guess)
-    return true
-  end
-    
-  def word_with_guesses
-      displayed = @word
-      displayed.chars.each_with_index { |x, index|
-         if not @right_letters.include? x
-             displayed[index] = "-"
-         end
-      }
-      return displayed
-  end
-    
-  def check_win_or_lose
-      if @wrong_count >= 7
-          return :lose
-      end
-      
-#       if word_with_guesses.match? (/\A[a-zA-Z]*\z/)
-#           return :win
-#       elsif word_with_guesses.match? (/\A[---]*\z/)
-#           return :lose
-#       else
-#           return :play
-#       end
-      if word_with_guesses.include?('-')
-        return :play
-      else
-        return :win
-      end
+    @guesses = ''
+    @wrong_guesses = ''
   end
 
-  # You can test it by running $ bundle exec irb -I. -r app.rb
-  # And then in the irb: irb(main):001:0> HangpersonGame.get_random_word
-  #  => "cooking"   <-- some random word
   def self.get_random_word
     require 'uri'
     require 'net/http'
     uri = URI('http://watchout4snakes.com/wo4snakes/Random/RandomWord')
-    Net::HTTP.new('watchout4snakes.com').start { |http|
-      return http.post(uri, "").body
-    }
+    Net::HTTP.post_form(uri ,{}).body
+  end
+  
+  def guess(char)
+    #check if char is nil, empty or a non-alphabetic character
+    if (char.nil? or char.empty? or (char =~ /[^a-zA-Z]/) != nil)
+      raise ArgumentError.new("Invalid argument of type nil, empty string or non-alphabetic character")
+    end
+    
+    #check if char has already been guesses
+    if ((@guesses.include?(char.downcase)) or (@wrong_guesses.include?(char.downcase)))
+      return false
+    end
+    
+    if @word.downcase.include?(char.downcase)
+      @guesses += char.downcase
+    else
+      @wrong_guesses += char.downcase
+    end
+    
+    return true
+  end
+
+  def word_with_guesses
+    display = ''
+    word.downcase.each_char do |char|
+      if @guesses.downcase.include?(char)
+        display += char
+      else
+        display += '-'
+      end
+    end
+    return display
+  end
+  
+  def check_win_or_lose
+    display = word_with_guesses
+    if @wrong_guesses.length >= 7
+      return :lose
+    end
+    #else
+    if display.include?('-')
+      return :play
+    else
+      return :win
+    end
   end
 end
